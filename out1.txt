@@ -1,0 +1,8 @@
+Index: 1 Info: program Parent: 0 Right Sibling: 0
+Index: 2 Info: declaration Parent: 1 Right Sibling: 0
+Index: 3 Info: typedecl Parent: 2 Right Sibling: 0
+Index: 4 Info: type Parent: 3 Right Sibling: 0
+Index: 5 Info: id Parent: 3 Right Sibling: 4
+Index: 6 Info: type_add Parent: 3 Right Sibling: 5
+Index: 7 Info: int Parent: 4 Right Sibling: 0
+Index: 8 Info: ; Parent: 6 Right Sibling: 0
