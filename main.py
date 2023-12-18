@@ -59,14 +59,14 @@ def test_parser_actions():
     prod=dict()
     prod["S"]=[["a","S","b","S"],["a","S"],["c"]]
     g=Grammar(terminals,non_terminals,"S",prod)
-
-    test = Parser('q', 1, [], ["S"], g ,"acbc",identifiers_sym_tbl,consts_sym_tbl)
+    test = Parser('q', 1, [], ["S"], g ,"acbc",[])
     test.parse()
-    #print("PO:")
-    #po = ParserOutput(test.working_stack, g)
-    #po.tranform()
-    #po.print()
-    p1=Parser('q',6,[("S",1),"a",("S",2),"a",("S",3),"c","b",("S",3),"c"],[],g,"aacbc",identifiers_sym_tbl,consts_sym_tbl)
+
+    po = ParserOutput(test.working_stack, g)
+    po.tranform()
+    po.print()
+    po.write_to_file("out2.txt")
+    p1=Parser('q',6,[("S",1),"a",("S",2),"a",("S",3),"c","b",("S",3),"c"],[],g,"aacbc",[])
 
     succes_test=copy.deepcopy(p1)
     succes_test.succes()
@@ -77,7 +77,7 @@ def test_parser_actions():
     assert p1.working_stack==succes_test.working_stack
 
 
-    p2 = Parser('b', 6, [("S", 1), "a", ("S", 1), "a", ("S", 3), "c", "b", ("S", 3), "c"], ["S","b"], g, "aacbc",identifiers_sym_tbl,consts_sym_tbl)
+    p2 = Parser('b', 6, [("S", 1), "a", ("S", 1), "a", ("S", 3), "c", "b", ("S", 3), "c"], ["S","b"], g, "aacbc",[])
     back_test = copy.deepcopy(p2)
     back_test.back()
     assert back_test.state == 'b'
@@ -87,7 +87,7 @@ def test_parser_actions():
     assert back_test.input_stack == ["S","b","c"]
 
 
-    p3 = Parser('b', 3, [("S", 1), "a", ("S", 1), "a", ("S", 1)], ["S","b","S","b","S","b","S","a"], g, "aacbc",identifiers_sym_tbl,consts_sym_tbl)
+    p3 = Parser('b', 3, [("S", 1), "a", ("S", 1), "a", ("S", 1)], ["S","b","S","b","S","b","S","a"], g, "aacbc",[])
     another_try1 = copy.deepcopy(p3)
     another_try1.another_try()
     assert another_try1.state == 'q'
@@ -96,7 +96,7 @@ def test_parser_actions():
     assert another_try1.working_stack == [("S", 1), "a", ("S", 1), "a", ("S", 2)]
     assert another_try1.input_stack ==  ["S", "b","S","b","S","a"]
 
-    p4= Parser('b', 1, [("S", 3)], ["c"], g, "cc",identifiers_sym_tbl,consts_sym_tbl)
+    p4= Parser('b', 1, [("S", 3)], ["c"], g, "cc",[])
     another_try2 = copy.deepcopy(p4)
     another_try2.another_try()
     assert another_try2.state == 'e'
@@ -105,7 +105,7 @@ def test_parser_actions():
     assert another_try2.working_stack == []
     assert another_try2.input_stack ==  []
 
-    p5 = Parser('b', 5, [("S", 1),"a",("S",1),"a",("S",3),"c","b",("S",3)], ["S","b","c"], g, "aacbc",identifiers_sym_tbl,consts_sym_tbl)
+    p5 = Parser('b', 5, [("S", 1),"a",("S",1),"a",("S",3),"c","b",("S",3)], ["S","b","c"], g, "aacbc",[])
     another_try3 = copy.deepcopy(p5)
     another_try3.another_try()
     assert another_try3.state == 'b'
@@ -125,7 +125,7 @@ def test_parser_actions():
     prod["S"] = [["a","S","b","S"], ["a","S"], ["c"]]
     g = Grammar(terminals, non_terminals, ["S"], prod)
 
-    p1 = Parser('q', 6, [("S", 1), "a", ("S", 1), "a", ("S", 3), "c", "b", ("S", 3), "c"], ["S", "b"], g, "aacbc",identifiers_sym_tbl,consts_sym_tbl)
+    p1 = Parser('q', 6, [("S", 1), "a", ("S", 1), "a", ("S", 3), "c", "b", ("S", 3), "c"], ["S", "b"], g, "aacbc",[])
     p1.advance()
 
     assert p1.state == 'q'
@@ -201,7 +201,6 @@ def read_grammar(file_path):
     terminals.add('\t')
     terminals.add(' ')
     starting_point = content[2].split(': ')[1]
-
     grammar_dict = {}
     for line in content[4:]:
         if line:
@@ -243,11 +242,14 @@ with open("token.in", 'r') as file:
     for line in file:
         tokens.append(line.replace('\n',''))
 
-separators=tokens[17:27]
+separators=tokens[18:28]
+print("SEPARATORS")
+print(separators)
 separators.append('\n')
 separators.append('\t')
 
-operators=tokens[2:17]
+operators=tokens[3:18]
+print(operators)
 print("\n")
 file_path = input("Enter the file name (e.g., a.txt):")
 
@@ -268,7 +270,7 @@ with open(file_path, 'r') as file:
                 if ok==False:       # we found the closing "
                     token+='"'
                     consts_sym_tbl.add(token)
-                    PIF.append(("const",(consts_sym_tbl.hash_fct(token),consts_sym_tbl.get_poz(token))))
+                    PIF.append((tokens.index("constring"),(consts_sym_tbl.hash_fct(token),consts_sym_tbl.get_poz(token))))
                     program.append(token)                                              #!
                     #print(token+" is a string const!")
                     token=""
@@ -281,14 +283,14 @@ with open(file_path, 'r') as file:
 
                     if fa_int.is_accepted(token):
                         consts_sym_tbl.add(token)
-                        PIF.append(("const", (consts_sym_tbl.hash_fct(token), consts_sym_tbl.get_poz(token))))
+                        PIF.append((tokens.index("nr"), (consts_sym_tbl.hash_fct(token), consts_sym_tbl.get_poz(token))))
                         program.append(token)                           #!
                         if i != ' ' and i != '\n' and i != '\t':
                             PIF.append((tokens.index(i), -1))
                             program.append(i)
                     elif fa_id.is_accepted(token):
                         identifiers_sym_tbl.add(token)
-                        PIF.append(("id", (identifiers_sym_tbl.hash_fct(token), identifiers_sym_tbl.get_poz(token))))
+                        PIF.append((tokens.index("id"), (identifiers_sym_tbl.hash_fct(token), identifiers_sym_tbl.get_poz(token))))
                         program.append(token)                                   #!
                         if i != ' ' and i != '\n' and i != '\t':
                             PIF.append((tokens.index(i), -1))
@@ -336,9 +338,11 @@ with open(file_path, 'r') as file:
         with open('PIF.out', 'w') as file:
             for pair in PIF:
                 file.write(str(pair)+ "\n")
-        parser = Parser('q', 1, [], [gr.starting_point], gr,program,identifiers_sym_tbl,consts_sym_tbl)
+        print(PIF)
+        parser = Parser('q', 1, [], [gr.starting_point], gr,PIF,tokens)
         print(program)
-        #test_parser_actions()
+        print(tokens)
+        test_parser_actions()
         parser.parse()
 
         print("PO:")

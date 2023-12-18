@@ -2,31 +2,29 @@ from ParserOutput import ParserOutput
 
 
 class Parser:
-    def __init__(self, s,i,w_st,in_st,gr,w,id_sym_tbl,const_sym_tbl):
+    def __init__(self, s,i,w_st,in_st,gr,p_file,t):
         self.state=s
         self.position=i             #position of current symbol in input sequence
         self.working_stack=w_st
         self.input_stack= in_st
         self.grammar=gr
-        self.sequence=w
-        self.id_symbol_table=id_sym_tbl
-        self.const_sym_table=const_sym_tbl
+        self.pif=p_file
+        self.tokens=t
 
-    def is_identifier(self,id):
-        return  self.id_symbol_table.lookup(id)
-
-    def is_const(self,c):
-        return  self.const_sym_table.lookup(c)
-
+    def check(self):
+        if isinstance(self.pif, str):
+            return self.pif[self.position-1]
+        else:
+            return self.tokens[self.pif[self.position - 1][0]]
     def parse(self):
         while self.state!='f' and self.state!='e':
             if self.state=='q':
-                if (self.position==len(self.sequence)+1) and len(self.input_stack)<=0:
+                if (self.position==len(self.pif)+1) and len(self.input_stack)<=0:
                     self.succes()
                 else:
                     if (len(self.input_stack)>0  and (self.input_stack[len(self.input_stack)-1] in self.grammar.non_terminals)):
                         self.expand()
-                    elif ( len(self.input_stack)>0 and self.position-1<len(self.sequence) and((self.input_stack[len(self.input_stack)-1]==self.sequence[self.position-1]) or (self.is_identifier(self.sequence[self.position-1])) or (self.is_const(self.sequence[self.position-1])))):
+                    elif (len(self.input_stack)>0 and self.position-1<len(self.pif) and((self.input_stack[len(self.input_stack)-1]==self.check()))):
                         self.advance()
                     else:
                         self.momentary_insuccess()
@@ -37,7 +35,7 @@ class Parser:
                     else:
                         self.another_try()
         if self.state=='e':
-            print("Error! :(")
+            print("Error! :( ")
             print(self.working_stack)
             print(self.input_stack)
         else:

@@ -10,7 +10,7 @@ type -> int | string
 namesdecl -> names id { nr } names_add
 names_add -> , id { nr } names_add ; | ;
 expression -> term | term operation expression
-term -> ( expression ) | id | nr | id { id } | id { nr }
+term -> ( expression ) | id | nr | id { id } | id { nr } | constring
 operation -> + | - | * | / | %
 condition -> negationcond | normcondition
 negationcond -> ! ( condition )

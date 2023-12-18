@@ -1,0 +1,7 @@
+Index: 1 Info: S Parent: 0 Right Sibling: 0
+Index: 2 Info: a Parent: 1 Right Sibling: 0
+Index: 3 Info: S Parent: 1 Right Sibling: 2
+Index: 4 Info: b Parent: 1 Right Sibling: 3
+Index: 5 Info: S Parent: 1 Right Sibling: 4
+Index: 6 Info: c Parent: 3 Right Sibling: 0
+Index: 7 Info: c Parent: 5 Right Sibling: 0

@@ -5,15 +5,16 @@ List None
 List None
 List None
 List None
+List b
+List a
 List None
 List None
 List None
-List None
-List None
-List c
+List c d
 
 Constants Symbol Table.
 List None
+List "and "
 List None
 List None
 List None
@@ -24,12 +25,11 @@ List None
 List None
 List None
 List None
+List "GCD between "
 List None
 List None
 List None
 List None
 List None
 List None
-List None
-List None
-List None
+List "is: "
